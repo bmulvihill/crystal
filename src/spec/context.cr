@@ -105,7 +105,7 @@ module Spec
         results = @results[:success] + @results[:fail]
         topN = results.sort_by { |res| -res.elapsed.not_nil!.to_f }[0..Spec.slowest.not_nil!]
         topN.each do |res|
-          puts "#{res.description} : #{res.elapsed.not_nil!.to_f} sec"
+          puts "#{res.description} : #{Spec.to_human(res.elapsed.not_nil!)}"
         end
       end
 
@@ -120,16 +120,7 @@ module Spec
                      else                                        :success
                      end
 
-      total_seconds = elapsed_time.total_seconds
-      if total_seconds < 1
-        puts "Finished in #{elapsed_time.total_milliseconds.round(2)} milliseconds"
-      elsif total_seconds < 60
-        puts "Finished in #{total_seconds.round(2)} seconds"
-      else
-        minutes = elapsed_time.minutes
-        seconds = elapsed_time.seconds
-        puts "Finished in #{minutes}:#{seconds < 10 ? "0" : ""}#{seconds} minutes"
-      end
+      puts "Finished in #{Spec.to_human(elapsed_time)}"
       puts Spec.color("#{total} examples, #{failures.size} failures, #{errors.size} errors, #{pendings.size} pending", final_status)
 
       unless failures_and_errors.empty?
